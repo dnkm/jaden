@@ -1,3 +1,9 @@
+import TeacherSessions from "./sessions/component";
+
 export default function TeacherHome() {
-  return <div>Teacher Home</div>;
+  return (
+    <div>
+      <TeacherSessions />
+    </div>
+  );
 }
