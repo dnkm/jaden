@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
 
 export default function Layout() {
-  const { profile, role } = useContext(AppContext);
+  const { profile } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -16,13 +16,15 @@ export default function Layout() {
     <div>
       <nav className="navbar bg-neutral text-neutral-content">
         <div className="flex-1">
-          <a className="btn btn-ghost text-xl">Tutor App</a>
+          <Link to="/" className="btn btn-ghost text-xl">
+            Tutor App
+          </Link>
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
-            <li>
+            {/* <li>
               <a>Link</a>
-            </li>
+            </li> */}
             <li>
               <details>
                 <summary>{profile?.full_name}</summary>
@@ -37,7 +39,7 @@ export default function Layout() {
         </div>
       </nav>
 
-      <main className="container mx-auto my-5">
+      <main className="container mx-auto p-5">
         <Outlet />
       </main>
     </div>

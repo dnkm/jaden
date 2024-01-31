@@ -20,7 +20,7 @@ export interface Database {
           cancelled_at?: string | null
           created_at?: string
           session_id: number
-          student_id?: string
+          student_id: string
         }
         Update: {
           cancelled_at?: string | null
@@ -40,7 +40,7 @@ export interface Database {
             foreignKeyName: "enroll_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]
@@ -104,7 +104,7 @@ export interface Database {
         Row: {
           created_at: string
           datetime: string
-          limit: number | null
+          limit: number
           session_id: number
           subject: Database["public"]["Enums"]["subject"]
           taken: number
@@ -113,7 +113,7 @@ export interface Database {
         Insert: {
           created_at?: string
           datetime: string
-          limit?: number | null
+          limit: number
           session_id?: number
           subject: Database["public"]["Enums"]["subject"]
           taken?: number
@@ -122,7 +122,7 @@ export interface Database {
         Update: {
           created_at?: string
           datetime?: string
-          limit?: number | null
+          limit?: number
           session_id?: number
           subject?: Database["public"]["Enums"]["subject"]
           taken?: number
@@ -133,7 +133,7 @@ export interface Database {
             foreignKeyName: "sessions_teacher_fkey"
             columns: ["teacher"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]

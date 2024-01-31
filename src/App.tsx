@@ -1,11 +1,10 @@
 import { createContext, useEffect, useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
+import Sessions from "./component/sessions/component";
 import Layout from "./layout";
 import { supabase } from "./supabaseClient";
-import TeacherHome from "./teacher";
-import StudentHome from "./student";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
@@ -57,28 +56,13 @@ function App() {
         <AppContext.Provider value={{ role, profile }}>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route
-                path="/"
-                element={
-                  role?.is_teacher ? (
-                    <Navigate to="/teacher" />
-                  ) : (
-                    <Navigate to="/student" />
-                  )
-                }
-              />
-              <Route path="/teacher" element={<TeacherHome />} />
-              <Route path="/student" element={<StudentHome />} />
+              <Route path="/" element={<Sessions />} />
             </Route>
           </Routes>
         </AppContext.Provider>
       )}
     </div>
   );
-}
-
-function IndexRedirect() {
-  return <div>index</div>;
 }
 
 export default App;

@@ -1,18 +1,18 @@
 import { format, getDaysInMonth, setDate } from "date-fns";
-import { useState } from "react";
+import { SessionsWithTeachername } from "./sessions/component";
 import classes from "./calendar.module.scss";
 
 export default function Calendar({
-  events = [],
+  d,
   onDateClicked = () => {},
+  sessionsMap,
 }: {
-  events?: Date[];
+  d: Date;
   onDateClicked?: (date: Date) => void;
+  sessionsMap: { [key: number]: SessionsWithTeachername[] };
 }) {
-  let [d, setD] = useState<Date>(new Date());
   return (
     <div>
-      <h1 className="text-right">{format(d, "yyyy / MM")}</h1>
       <div className={classes.calendar}>
         {"SUN,MON,TUE,WED,THU,FRI,SAT".split(",").map((v) => (
           <div key={v}>{v}</div>
@@ -24,12 +24,11 @@ export default function Calendar({
           <Cell
             key={i}
             d={setDate(d, i + 1)}
-            events={events}
-            onDateClicked={(date:Date) => {
+            sessions={sessionsMap[i + 1] ?? []}
+            onDateClicked={(date: Date) => {
               onDateClicked(date);
-              setD(date);
             }}
-            highlighted={d.getDate() == i+1}
+            highlighted={d.getDate() == i + 1}
           />
         ))}
         {new Array(7 - ((setDate(d, 1).getDay() + getDaysInMonth(d)) % 7))
@@ -44,21 +43,34 @@ export default function Calendar({
 
 function Cell({
   d,
-  events,
+  sessions,
   onDateClicked,
   highlighted,
 }: {
   d: Date;
-  events: Date[];
+  sessions: SessionsWithTeachername[];
   onDateClicked: (date: Date) => void;
   highlighted: boolean;
 }) {
   return (
     <div
-      className={`hover:bg-slate-100 cursor-pointer select-none `}
+      className={`hover:bg-base-300 cursor-pointer select-none ${highlighted ? "bg-base-200" : ""}`}
       onClick={() => onDateClicked(d)}
     >
       <span className={highlighted ? "text-accent" : ""}>{d.getDate()}</span>
+      <div>
+        {sessions.map((v) => (
+          <div key={v.session_id} className="badge space-x-1">
+            <span className="font-bold">
+              {format(new Date(v.datetime), "haaaaa")}{" "}
+            </span>
+            {/* <span>{v.profiles?.full_name}</span> */}
+            {/* <span>
+              {v.taken}/{v.limit}
+            </span> */}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

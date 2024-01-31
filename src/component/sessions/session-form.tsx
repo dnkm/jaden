@@ -1,36 +1,87 @@
+import { set } from "date-fns";
 import { useContext, useState } from "react";
-import { SUBJECTS } from "../../utils/constants";
-import { AppContext } from "../../App";
 import { Enums, Tables } from "../../../types/supabase";
+import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
-import { setHours } from "date-fns";
+import { SUBJECTS } from "../../utils/constants";
+import { SessionsWithTeachername } from "./component";
 
 export default function SessionForm({
   setSessions,
   selectedDate,
+  formEntry,
 }: {
   setSessions: Function;
   selectedDate: Date;
+  formEntry: Tables<"sessions"> | undefined;
 }) {
-  let [time, setTime] = useState<number>(14);
-  let [subject, setSubject] = useState<Enums<"subject">>(SUBJECTS[0]);
-  let [limit, setLimit] = useState<number>(1);
+  let [hour, setHour] = useState<number>(
+    formEntry ? new Date(formEntry.datetime).getHours() : 14
+  );
+  let [subject, setSubject] = useState<Enums<"subject">>(
+    formEntry?.subject || SUBJECTS[0]
+  );
+  let [limit, setLimit] = useState<number>(formEntry?.limit || 1);
+  let [loading, setLoading] = useState<boolean>(false);
   const { profile } = useContext(AppContext);
+  const modal_id = formEntry
+    ? "edit_session" + formEntry.session_id
+    : "add_session_modal";
+
+  async function handleUpdate() {
+    console.log("updating");
+    setLoading(true);
+    let entry = {
+      limit,
+      subject,
+      datetime: set(selectedDate, {
+        hours: hour,
+        minutes: 0,
+        seconds: 0,
+      }).toUTCString(),
+    };
+    let { error } = await supabase
+      .from("sessions")
+      .update(entry)
+      .eq("session_id", 6);
+
+    if (error) {
+      alert("Something went wrong!");
+    } else {
+      setSessions((p: SessionsWithTeachername[]) =>
+        p.map((ss) =>
+          ss.session_id === formEntry!.session_id ? { ...ss, ...entry } : ss
+        )
+      );
+    }
+
+    setLoading(false);
+    (document.getElementById(modal_id) as HTMLDialogElement).close();
+  }
 
   async function handleAdd() {
+    setLoading(true);
     let entry = {
       limit,
       teacher: profile!.id,
       subject,
-      datetime: setHours(selectedDate, time).toUTCString(),
-      taken: 0,
+      datetime: set(selectedDate, {
+        hours: hour,
+        minutes: 0,
+        seconds: 0,
+      }).toUTCString(),
     };
-    let { data } = await supabase.from("sessions").insert(entry).single();
-    setSessions((p: Tables<"sessions">[]) => [...p, data]);
+    let { data } = await supabase
+      .from("sessions")
+      .insert(entry)
+      .select("*, profiles!sessions_teacher_fkey(full_name)");
+    setSessions((p: SessionsWithTeachername[]) => [...p, ...data!]);
+    setLoading(false);
+    (document.getElementById(modal_id) as HTMLDialogElement).close();
   }
 
   return (
-    <dialog className="modal" id="teacher_session_form_modal">
+    <dialog className="modal" id={modal_id}>
       <div className="modal-box">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -38,7 +89,7 @@ export default function SessionForm({
           </button>
         </form>
 
-        <h3>Add a new session</h3>
+        <h3>{!!formEntry ? "Update session" : "Add a new session"} </h3>
         <div className="form space-y-5">
           {/* time selector */}
           <div className="form-control">
@@ -49,9 +100,9 @@ export default function SessionForm({
                   type="button"
                   key={t}
                   className={
-                    "btn join-item " + (time === t ? "btn-primary" : "")
+                    "btn join-item " + (hour === t ? "btn-primary" : "")
                   }
-                  onClick={() => setTime(t)}
+                  onClick={() => setHour(t)}
                 >
                   {t - 12} pm
                 </button>
@@ -97,8 +148,12 @@ export default function SessionForm({
             </div>
           </div>
 
-          <button className="mt-5 btn btn-primary" onClick={handleAdd}>
-            Add
+          <button
+            className="mt-5 btn btn-primary"
+            onClick={formEntry ? handleUpdate : handleAdd}
+            disabled={loading}
+          >
+            {formEntry ? "Update" : "Add"}
           </button>
         </div>
       </div>
