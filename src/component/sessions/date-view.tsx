@@ -1,12 +1,11 @@
+import { QueryData } from "@supabase/supabase-js";
 import { format } from "date-fns";
 import { useContext, useEffect, useState } from "react";
-import { Tables } from "../../../types/supabase";
-import { AppContext } from "../../App";
-import SessionForm from "./session-form";
-import { SessionsWithTeachername } from "./component";
 import { FaRegEdit } from "react-icons/fa";
+import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
-import { QueryData } from "@supabase/supabase-js";
+import { SessionsWithTeachername } from "./component";
+import SessionForm from "./session-form";
 
 export default function DateView({
   sessions,
