@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
 import Layout from "./layout";
@@ -32,12 +32,17 @@ function App() {
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) loadUserData(session.user.id);
+      if (session) {
+        console.log("init login detected");
+        loadUserData(session.user.id);
+      }
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) loadUserData(session.user.id);
-      else {
+      if (session && !profile) {
+        console.log("login detected");
+        loadUserData(session.user.id);
+      } else {
         setProfile(null);
         setRole(null);
       }
@@ -52,13 +57,28 @@ function App() {
         <AppContext.Provider value={{ role, profile }}>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={role?.is_teacher ? <TeacherHome /> : <StudentHome />} />
+              <Route
+                path="/"
+                element={
+                  role?.is_teacher ? (
+                    <Navigate to="/teacher" />
+                  ) : (
+                    <Navigate to="/student" />
+                  )
+                }
+              />
+              <Route path="/teacher" element={<TeacherHome />} />
+              <Route path="/student" element={<StudentHome />} />
             </Route>
           </Routes>
         </AppContext.Provider>
       )}
     </div>
   );
+}
+
+function IndexRedirect() {
+  return <div>index</div>;
 }
 
 export default App;
