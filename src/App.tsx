@@ -9,15 +9,20 @@ import { supabase } from "./supabaseClient";
 type AppContextType = {
   profile: Tables<"profiles"> | null;
   role: Tables<"roles"> | null;
+  loading: boolean;
+  setLoading: Function; // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 };
 export const AppContext = createContext<AppContextType>({
   profile: null,
   role: null,
+  loading: false,
+  setLoading: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
 });
 
 function App() {
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [role, setRole] = useState<Tables<"roles"> | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const loadUserData = (id: string) => {
@@ -53,7 +58,7 @@ function App() {
       {!profile ? (
         <Auth />
       ) : (
-        <AppContext.Provider value={{ role, profile }}>
+        <AppContext.Provider value={{ role, profile, loading, setLoading }}>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Sessions />} />

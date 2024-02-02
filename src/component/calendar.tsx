@@ -57,7 +57,7 @@ function Cell({
       className={`hover:bg-base-300 cursor-pointer select-none ${highlighted ? "bg-base-200" : ""}`}
       onClick={() => onDateClicked(d)}
     >
-      <span className={highlighted ? "text-accent" : ""}>{d.getDate()}</span>
+      <span className={`text-sm ${highlighted ? "text-accent" : "text-gray-400"}`}>{d.getDate()}</span>
       <div>
         {sessions.map((v) => (
           <div key={v.session_id} className="badge space-x-1">

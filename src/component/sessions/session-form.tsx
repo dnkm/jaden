@@ -5,11 +5,6 @@ import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
 import { SessionsWithTeachername } from "./component";
 
-const TIMES = [
-  { id: 1, display: "1:35PM", hour: 13, minute: 35 },
-  { id: 2, display: "2:00PM", hour: 14, minute: 0 },
-];
-
 export default function SessionForm({
   setSessions,
   selectedDate,
@@ -19,12 +14,6 @@ export default function SessionForm({
   selectedDate: Date;
   formEntry: Tables<"sessions"> | undefined;
 }) {
-  let [timeId, setTimeId] = useState<number>(
-    formEntry
-      ? TIMES.find((t) => new Date(formEntry.datetime).getHours() === t.hour)
-          ?.id || 1
-      : 1
-  );
   let [limit, setLimit] = useState<number>(formEntry?.limit || 1);
   let [loading, setLoading] = useState<boolean>(false);
   const { profile } = useContext(AppContext);
@@ -37,11 +26,6 @@ export default function SessionForm({
     setLoading(true);
     let entry = {
       limit,
-      datetime: set(selectedDate, {
-        hours: timeId,
-        minutes: 0,
-        seconds: 0,
-      }).toUTCString(),
     };
     let { error } = await supabase
       .from("sessions")
@@ -64,13 +48,13 @@ export default function SessionForm({
 
   async function handleAdd() {
     setLoading(true);
-    let time = TIMES.find((t) => t.id === timeId);
+    
     let entry = {
       limit,
       teacher: profile!.id,
       datetime: set(selectedDate, {
-        hours: time!.hour,
-        minutes: time!.minute,
+        hours: selectedDate.getDay() == 5 ? 2 : 1,
+        minutes: selectedDate.getDay() == 5 ? 0 : 30,
         seconds: 0,
       }).toUTCString(),
     };
@@ -92,12 +76,10 @@ export default function SessionForm({
           </button>
         </form>
 
-        <h1>***{timeId}</h1>
-
         <h3>{!!formEntry ? "Update session" : "Add a new session"} </h3>
         <div className="form space-y-5">
           {/* time selector */}
-          <div className="form-control">
+          {/* <div className="form-control">
             <label>Time</label>
             <div className="join">
               {TIMES.map((t) => (
@@ -113,7 +95,7 @@ export default function SessionForm({
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* number of students */}
           <div className="form-control">

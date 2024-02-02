@@ -1,5 +1,5 @@
 import { QueryData } from "@supabase/supabase-js";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { AppContext } from "../../App";
@@ -16,7 +16,7 @@ export default function DateView({
   selectedDate: Date;
   setSessions: Function;
 }) {
-  const { role } = useContext(AppContext);
+  const { role, profile, loading, setLoading } = useContext(AppContext);
 
   function openForm() {
     (
@@ -24,13 +24,38 @@ export default function DateView({
     ).showModal();
   }
 
+  async function handleAdd() {
+    if (!role?.is_teacher) return;
+    setLoading(true);
+
+    let entry = {
+      limit: 50,
+      teacher: profile!.id,
+      datetime: set(selectedDate, {
+        hours: selectedDate.getDay() == 5 ? 2 : 1,
+        minutes: selectedDate.getDay() == 5 ? 0 : 30,
+        seconds: 0,
+      }).toUTCString(),
+    };
+    let { data } = await supabase
+      .from("sessions")
+      .insert(entry)
+      .select("*, profiles!sessions_teacher_fkey(full_name)");
+    setSessions((p: SessionsWithTeachername[]) => [...p, ...data!]);
+    setLoading(false);
+  }
+
   return (
     <div className="border rounded p-5 my-5 space-y-5">
       <div className="flex justify-between">
         <h3>{format(selectedDate, "MM/dd EEE")}</h3>
-        {role?.is_teacher && (
+        {role?.is_teacher && sessions.length == 0 && (
           <div>
-            <button className="btn btn-primary" onClick={openForm}>
+            <button
+              className="btn btn-primary"
+              onClick={handleAdd}
+              disabled={loading}
+            >
               Add Session
             </button>
           </div>
