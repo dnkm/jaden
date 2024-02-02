@@ -1,68 +1,59 @@
-import { set } from "date-fns";
-import { useContext, useState } from "react";
-import { Tables } from "../../../types/supabase";
+import React, { FormEvent, useContext } from "react";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
 import { SessionsWithTeachername } from "./component";
 
+type SessionFormElement = HTMLFormElement & {
+  limit: HTMLInputElement;
+};
+
 export default function SessionForm({
   setSessions,
-  selectedDate,
-  formEntry,
+  session,
 }: {
   setSessions: Function;
-  selectedDate: Date;
-  formEntry: Tables<"sessions"> | undefined;
+  session: SessionsWithTeachername;
 }) {
-  let [limit, setLimit] = useState<number>(formEntry?.limit || 1);
-  let [loading, setLoading] = useState<boolean>(false);
-  const { profile } = useContext(AppContext);
-  const modal_id = formEntry
-    ? "edit_session" + formEntry.session_id
-    : "add_session_modal";
+  const { profile, loading, setLoading } = useContext(AppContext);
+  const modal_id = "edit_session" + session.session_id;
 
-  async function handleUpdate() {
-    console.log("updating");
+  async function handleUpdate(ev: any) {
+    ev.preventDefault();
     setLoading(true);
-    let entry = {
-      limit,
-    };
+    let data = { limit: parseInt(ev.target.limit.value) };
+    console.log(123, data, session.session_id);
     let { error } = await supabase
       .from("sessions")
-      .update(entry)
-      .eq("session_id", 6);
+      .update(data)
+      .eq("session_id", session.session_id);
 
     if (error) {
       alert("Something went wrong!");
     } else {
       setSessions((p: SessionsWithTeachername[]) =>
         p.map((ss) =>
-          ss.session_id === formEntry!.session_id ? { ...ss, ...entry } : ss
+          ss.session_id === session!.session_id ? { ...ss, ...data } : ss
         )
       );
     }
-
     setLoading(false);
     (document.getElementById(modal_id) as HTMLDialogElement).close();
   }
 
-  async function handleAdd() {
+  async function handleDelete() {
+    if (!confirm("Are you sure?")) return;
     setLoading(true);
-    
-    let entry = {
-      limit,
-      teacher: profile!.id,
-      datetime: set(selectedDate, {
-        hours: selectedDate.getDay() == 5 ? 2 : 1,
-        minutes: selectedDate.getDay() == 5 ? 0 : 30,
-        seconds: 0,
-      }).toUTCString(),
-    };
-    let { data } = await supabase
+    let { error } = await supabase
       .from("sessions")
-      .insert(entry)
-      .select("*, profiles!sessions_teacher_fkey(full_name)");
-    setSessions((p: SessionsWithTeachername[]) => [...p, ...data!]);
+      .delete()
+      .eq("session_id", session.session_id);
+    if (error) {
+      alert("Something went wrong.");
+    } else {
+      setSessions((p: SessionsWithTeachername[]) =>
+        p.filter((s) => s.session_id !== session.session_id)
+      );
+    }
     setLoading(false);
     (document.getElementById(modal_id) as HTMLDialogElement).close();
   }
@@ -76,8 +67,8 @@ export default function SessionForm({
           </button>
         </form>
 
-        <h3>{!!formEntry ? "Update session" : "Add a new session"} </h3>
-        <div className="form space-y-5">
+        <h3>{!!session ? "Update session" : "Add a new session"} </h3>
+        <form className="form space-y-5" onSubmit={handleUpdate}>
           {/* time selector */}
           {/* <div className="form-control">
             <label>Time</label>
@@ -99,31 +90,30 @@ export default function SessionForm({
 
           {/* number of students */}
           <div className="form-control">
-            <label>Size (number of students)</label>
-            <div className="join">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50].map((s) => (
-                <button
-                  type="button"
-                  key={s}
-                  className={
-                    "btn join-item " + (limit === s ? "btn-primary" : "")
-                  }
-                  onClick={() => setLimit(s)}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+            <label>Student Limit</label>
+            <input
+              className="input input-bordered"
+              type="number"
+              defaultValue={session.limit}
+              name="limit"
+            />
           </div>
 
-          <button
-            className="mt-5 btn btn-primary"
-            onClick={formEntry ? handleUpdate : handleAdd}
-            disabled={loading}
-          >
-            {formEntry ? "Update" : "Add"}
-          </button>
-        </div>
+          <div className="space-x-5">
+            <button className="mt-5 btn btn-primary" disabled={loading}>
+              Update
+            </button>
+
+            <button
+              className="mt-5 btn btn-warning"
+              disabled={loading}
+              type="button"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+          </div>
+        </form>
       </div>
     </dialog>
   );

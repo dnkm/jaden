@@ -18,12 +18,6 @@ export default function DateView({
 }) {
   const { role, profile, loading, setLoading } = useContext(AppContext);
 
-  function openForm() {
-    (
-      document.getElementById("add_session_modal") as HTMLDialogElement
-    ).showModal();
-  }
-
   async function handleAdd() {
     if (!role?.is_teacher) return;
     setLoading(true);
@@ -32,7 +26,7 @@ export default function DateView({
       limit: 50,
       teacher: profile!.id,
       datetime: set(selectedDate, {
-        hours: selectedDate.getDay() == 5 ? 2 : 1,
+        hours: selectedDate.getDay() == 5 ? 12 : 11,
         minutes: selectedDate.getDay() == 5 ? 0 : 30,
         seconds: 0,
       }).toUTCString(),
@@ -68,11 +62,6 @@ export default function DateView({
         ))}
       </div>
 
-      <SessionForm
-        setSessions={setSessions}
-        selectedDate={selectedDate}
-        formEntry={undefined}
-      />
     </div>
   );
 }
@@ -159,8 +148,7 @@ function SessionCard({
 
       <SessionForm
         setSessions={setSessions}
-        selectedDate={new Date(s.datetime)}
-        formEntry={s}
+        session={s}
       />
     </div>
   );
