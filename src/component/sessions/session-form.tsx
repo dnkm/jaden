@@ -1,11 +1,7 @@
-import React, { FormEvent, useContext } from "react";
+import { useContext } from "react";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
 import { SessionsWithTeachername } from "./component";
-
-type SessionFormElement = HTMLFormElement & {
-  limit: HTMLInputElement;
-};
 
 export default function SessionForm({
   setSessions,
@@ -14,7 +10,7 @@ export default function SessionForm({
   setSessions: Function;
   session: SessionsWithTeachername;
 }) {
-  const { profile, loading, setLoading } = useContext(AppContext);
+  const { loading, setLoading } = useContext(AppContext);
   const modal_id = "edit_session" + session.session_id;
 
   async function handleUpdate(ev: any) {
