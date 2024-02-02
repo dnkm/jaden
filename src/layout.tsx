@@ -2,9 +2,10 @@ import { useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
+import { FaRegCalendar } from "react-icons/fa";
 
 export default function Layout() {
-  const { profile } = useContext(AppContext);
+  const { profile, role } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -17,14 +18,19 @@ export default function Layout() {
       <nav className="navbar bg-neutral text-neutral-content">
         <div className="flex-1">
           <Link to="/" className="btn btn-ghost text-xl">
-            Tutor App
+            <FaRegCalendar />
+            StudySync
           </Link>
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
-            {/* <li>
-              <a>Link</a>
-            </li> */}
+            {role?.is_teacher && (
+              <>
+                <li>
+                  <Link to="/teacher/subjects">Subjects</Link>
+                </li>
+              </>
+            )}
             <li>
               <details>
                 <summary>{profile?.full_name}</summary>

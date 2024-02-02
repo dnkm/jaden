@@ -13,18 +13,21 @@ export interface Database {
         Row: {
           cancelled_at: string | null
           created_at: string
+          is_present: boolean
           session_id: number
           student_id: string
         }
         Insert: {
           cancelled_at?: string | null
           created_at?: string
+          is_present?: boolean
           session_id: number
           student_id: string
         }
         Update: {
           cancelled_at?: string | null
           created_at?: string
+          is_present?: boolean
           session_id?: number
           student_id?: string
         }
@@ -149,6 +152,36 @@ export interface Database {
           subject_id?: number
         }
         Relationships: []
+      }
+      teacher_subject_map: {
+        Row: {
+          subject_id: number
+          teacher_id: string
+        }
+        Insert: {
+          subject_id: number
+          teacher_id: string
+        }
+        Update: {
+          subject_id?: number
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_subject_map_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["subject_id"]
+          },
+          {
+            foreignKeyName: "teacher_subject_map_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

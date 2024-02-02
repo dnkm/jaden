@@ -5,6 +5,7 @@ import Auth from "./auth";
 import Sessions from "./component/sessions/component";
 import Layout from "./layout";
 import { supabase } from "./supabaseClient";
+import TeacherSubjects from "./teacher/subjects";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
@@ -62,6 +63,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Sessions />} />
+              <Route path="/teacher/subjects" element={<TeacherSubjects />} />
             </Route>
           </Routes>
         </AppContext.Provider>

@@ -1,6 +1,8 @@
 import { format, getDaysInMonth, setDate } from "date-fns";
 import { SessionsWithTeachername } from "./sessions/component";
 import classes from "./calendar.module.scss";
+import { useContext } from "react";
+import { AppContext } from "../App";
 
 export default function Calendar({
   d,
@@ -52,17 +54,33 @@ function Cell({
   onDateClicked: (date: Date) => void;
   highlighted: boolean;
 }) {
+  const { role } = useContext(AppContext);
+
   return (
     <div
-      className={`hover:bg-base-300 cursor-pointer select-none ${highlighted ? "bg-base-200" : ""}`}
+      className={`hover:bg-base-300 cursor-pointer select-none ${
+        highlighted ? "bg-base-200" : ""
+      }`}
       onClick={() => onDateClicked(d)}
     >
-      <span className={`text-sm ${highlighted ? "text-accent" : "text-gray-400"}`}>{d.getDate()}</span>
+      <span
+        className={`text-sm ${highlighted ? "text-accent" : "text-gray-400"}`}
+      >
+        {d.getDate()}
+      </span>
       <div>
         {sessions.map((v) => (
-          <div key={v.session_id} className="badge space-x-1">
+          <div
+            key={v.session_id}
+            className={`badge space-x-1 ${
+              !!v.enroll.find((e) => e.student_id === role?.id)
+                ? "badge-accent"
+                : ""
+            }`}
+          >
             <span className="font-bold">
               {format(new Date(v.datetime), "h:mm")}{" "}
+              {role?.is_teacher && <>({v.enroll.length})</>}
             </span>
             {/* <span>{v.profiles?.full_name}</span> */}
             {/* <span>

@@ -4,11 +4,17 @@ import Calendar from "../calendar";
 import { supabase } from "../../supabaseClient";
 import DateView from "./date-view";
 import { AppContext } from "../../App";
-import { addMonths, endOfMonth, format, isSameMonth, startOfMonth } from "date-fns";
+import {
+  addMonths,
+  endOfMonth,
+  format,
+  isSameMonth,
+  startOfMonth,
+} from "date-fns";
 
 const sessionsWithTeachernameQuery = supabase
   .from("sessions")
-  .select("*, profiles(full_name)")
+  .select("*, profiles(full_name), enroll(student_id, is_present, profiles(full_name))")
   .single();
 export type SessionsWithTeachername = QueryData<
   typeof sessionsWithTeachernameQuery
@@ -23,20 +29,26 @@ export default function Sessions() {
     if (role?.is_teacher) {
       supabase
         .from("sessions")
-        .select("*, profiles!sessions_teacher_fkey(full_name)")
+        .select(
+          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+        )
         .eq("teacher", profile!.id)
         .gte("datetime", startOfMonth(d).toISOString())
         .lte("datetime", endOfMonth(d).toISOString())
         .order("datetime")
         .then(({ data }) => {
+          console.log(data);
           setSessions(data!);
         });
     } else {
       supabase
         .from("sessions")
-        .select("*, profiles!sessions_teacher_fkey(full_name)")
+        .select(
+          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+        )
         .gte("datetime", startOfMonth(d).toISOString())
         .lte("datetime", endOfMonth(d).toISOString())
+        // .eq("enroll.student_id", profile!.id)
         .order("datetime")
         .then(({ data }) => {
           setSessions(data!);
