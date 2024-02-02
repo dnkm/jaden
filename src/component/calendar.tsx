@@ -62,7 +62,7 @@ function Cell({
         {sessions.map((v) => (
           <div key={v.session_id} className="badge space-x-1">
             <span className="font-bold">
-              {format(new Date(v.datetime), "haaaaa")}{" "}
+              {format(new Date(v.datetime), "h:mm")}{" "}
             </span>
             {/* <span>{v.profiles?.full_name}</span> */}
             {/* <span>

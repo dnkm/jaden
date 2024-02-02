@@ -93,9 +93,9 @@ function SessionCard({
   return (
     <div className="card bg-base-200">
       <div className="card-body">
-        <h2 className="card-title">
-          {format(new Date(s.datetime), "haaa")} :: {s.subject} ::
-          {s.profiles?.full_name} :: Session # {s.session_id}
+        <h2 className="card-title flex justify-between">
+          <div>{format(new Date(s.datetime), "h:mm")}</div>
+          <div>{s.profiles?.full_name}</div>
         </h2>
         <div>
           {students.map((s) => (

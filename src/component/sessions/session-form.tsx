@@ -1,10 +1,14 @@
 import { set } from "date-fns";
 import { useContext, useState } from "react";
-import { Enums, Tables } from "../../../types/supabase";
+import { Tables } from "../../../types/supabase";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
-import { SUBJECTS } from "../../utils/constants";
 import { SessionsWithTeachername } from "./component";
+
+const TIMES = [
+  { id: 1, display: "1:35PM", hour: 13, minute: 35 },
+  { id: 2, display: "2:00PM", hour: 14, minute: 0 },
+];
 
 export default function SessionForm({
   setSessions,
@@ -15,11 +19,11 @@ export default function SessionForm({
   selectedDate: Date;
   formEntry: Tables<"sessions"> | undefined;
 }) {
-  let [hour, setHour] = useState<number>(
-    formEntry ? new Date(formEntry.datetime).getHours() : 14
-  );
-  let [subject, setSubject] = useState<Enums<"subject">>(
-    formEntry?.subject || SUBJECTS[0]
+  let [timeId, setTimeId] = useState<number>(
+    formEntry
+      ? TIMES.find((t) => new Date(formEntry.datetime).getHours() === t.hour)
+          ?.id || 1
+      : 1
   );
   let [limit, setLimit] = useState<number>(formEntry?.limit || 1);
   let [loading, setLoading] = useState<boolean>(false);
@@ -33,9 +37,8 @@ export default function SessionForm({
     setLoading(true);
     let entry = {
       limit,
-      subject,
       datetime: set(selectedDate, {
-        hours: hour,
+        hours: timeId,
         minutes: 0,
         seconds: 0,
       }).toUTCString(),
@@ -61,13 +64,13 @@ export default function SessionForm({
 
   async function handleAdd() {
     setLoading(true);
+    let time = TIMES.find((t) => t.id === timeId);
     let entry = {
       limit,
       teacher: profile!.id,
-      subject,
       datetime: set(selectedDate, {
-        hours: hour,
-        minutes: 0,
+        hours: time!.hour,
+        minutes: time!.minute,
         seconds: 0,
       }).toUTCString(),
     };
@@ -82,12 +85,14 @@ export default function SessionForm({
 
   return (
     <dialog className="modal" id={modal_id}>
-      <div className="modal-box">
+      <div className="modal-box max-w-screen-2xl">
         <form method="dialog">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>
+
+        <h1>***{timeId}</h1>
 
         <h3>{!!formEntry ? "Update session" : "Add a new session"} </h3>
         <div className="form space-y-5">
@@ -95,35 +100,16 @@ export default function SessionForm({
           <div className="form-control">
             <label>Time</label>
             <div className="join">
-              {[14, 15, 16, 17, 18].map((t) => (
+              {TIMES.map((t) => (
                 <button
                   type="button"
-                  key={t}
+                  key={t.id}
                   className={
-                    "btn join-item " + (hour === t ? "btn-primary" : "")
+                    "btn join-item " + (timeId === t.id ? "btn-primary" : "")
                   }
-                  onClick={() => setHour(t)}
+                  onClick={() => setTimeId(t.id)}
                 >
-                  {t - 12} pm
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* subject selector */}
-          <div className="form-control">
-            <label>Subject</label>
-            <div className="join">
-              {SUBJECTS.map((s) => (
-                <button
-                  type="button"
-                  key={s}
-                  className={
-                    "btn join-item " + (subject === s ? "btn-primary" : "")
-                  }
-                  onClick={() => setSubject(s as Enums<"subject">)}
-                >
-                  {s}
+                  {t.display}
                 </button>
               ))}
             </div>
@@ -133,7 +119,7 @@ export default function SessionForm({
           <div className="form-control">
             <label>Size (number of students)</label>
             <div className="join">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50].map((s) => (
                 <button
                   type="button"
                   key={s}

@@ -106,7 +106,6 @@ export interface Database {
           datetime: string
           limit: number
           session_id: number
-          subject: Database["public"]["Enums"]["subject"]
           taken: number
           teacher: string
         }
@@ -115,7 +114,6 @@ export interface Database {
           datetime: string
           limit: number
           session_id?: number
-          subject: Database["public"]["Enums"]["subject"]
           taken?: number
           teacher: string
         }
@@ -124,7 +122,6 @@ export interface Database {
           datetime?: string
           limit?: number
           session_id?: number
-          subject?: Database["public"]["Enums"]["subject"]
           taken?: number
           teacher?: string
         }
@@ -138,6 +135,21 @@ export interface Database {
           }
         ]
       }
+      subjects: {
+        Row: {
+          name: string
+          subject_id: number
+        }
+        Insert: {
+          name: string
+          subject_id?: number
+        }
+        Update: {
+          name?: string
+          subject_id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -146,7 +158,149 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      subject: "Math" | "English" | "Social Studies"
+      subject:
+        | "7th Grade Lit and Comp"
+        | "7th Grade World History"
+        | "8th Grade Lit and Comp"
+        | "8th Grade US History"
+        | "Animations I"
+        | "AP Art and Design"
+        | "AP Art History"
+        | "AP Biology"
+        | "AP Calc AB"
+        | "AP Calc BC"
+        | "AP Chemistry"
+        | "AP Chinese Lang"
+        | "AP Comp Sci Principles"
+        | "AP Environmental Science"
+        | "AP French"
+        | "AP Government"
+        | "AP Lang"
+        | "AP Lit"
+        | "AP Macroeconomics"
+        | "AP Music Theory"
+        | "AP Physics 1"
+        | "AP Physics 2"
+        | "AP Psychology"
+        | "AP Research"
+        | "AP Seminar"
+        | "AP Spanish Lang"
+        | "AP Statistics"
+        | "AP U.S History"
+        | "AP World History"
+        | "Ballet Folklorico I"
+        | "Ballet Folklorico II"
+        | "Ballet I"
+        | "Ballet II"
+        | "Ballet III"
+        | "Ballroom I "
+        | "Ballroom II "
+        | "Ballroom III "
+        | "Biology of the Living Earth"
+        | "Body Conditioning"
+        | "Ceramics I"
+        | "Chemistry"
+        | "Culinary Basics"
+        | "Culinary II"
+        | "Dance Exploration"
+        | "Dance Fitness"
+        | "Digital Painting I"
+        | "Drawing/Painting I"
+        | "Economics"
+        | "Electives:"
+        | "Emergency Med Tech and Care"
+        | "Environmental Science"
+        | "Fashion and Costume Design"
+        | "Financial Algebra"
+        | "French I"
+        | "French II"
+        | "French III"
+        | "French III H "
+        | "French IV"
+        | "Global Studies"
+        | "Government"
+        | "Graphic Design"
+        | "Health Education"
+        | "Health:"
+        | "Hip Hop I"
+        | "Hip Hop II"
+        | "Honors Chemistry"
+        | "Human Anatomy and Physiology"
+        | "Integrated I"
+        | "Integrated I A "
+        | "Integrated I B"
+        | "Integrated II"
+        | "Integrated III"
+        | "Integrated III Enh"
+        | "Intro to Comp Sci"
+        | "Intro to Engineering and Robotics"
+        | "Jazz I"
+        | "Jazz II"
+        | "Jazz III"
+        | "Journalism"
+        | "Leadership"
+        | "Lit and Comp I"
+        | "Lit and Comp I H"
+        | "Lit and Comp II "
+        | "Lit and Comp II H"
+        | "Lit and Comp III"
+        | "Literature and Composition Courses:"
+        | "Mandarin I"
+        | "Mandarin II"
+        | "Mandarin III"
+        | "Mandarin IV"
+        | "Mandarin IV H"
+        | "Mandarin Speakers"
+        | "Math 2"
+        | "Math 3"
+        | "Math:"
+        | "Media Analysis/Modern Plays"
+        | "MT Dance I"
+        | "MT Dance II"
+        | "Myth/Sci Fi Composition"
+        | "OCEAA Guest Artists"
+        | "Peer Assistance Leadership"
+        | "Photography I"
+        | "Physical Education:"
+        | "Physics"
+        | "Piano I"
+        | "Piano II"
+        | "Pilates"
+        | "Pop Culture/Film Literature"
+        | "Precalculus"
+        | "Science 7"
+        | "Science 8"
+        | "Science Academy 7/8"
+        | "Science:"
+        | "SciFi/19th Century Gothic Literature"
+        | "Social Science Courses:"
+        | "Spanish I"
+        | "Spanish II"
+        | "Spanish III"
+        | "Spanish IV"
+        | "Spanish IV H"
+        | "Spanish Speakers A"
+        | "Spanish Speakers B"
+        | "Spanish V - Hispanic Lit"
+        | "Study Hall"
+        | "Taekwondo Advanced"
+        | "Taekwondo Beginning"
+        | "Taekwondo Black Belt"
+        | "Taekwondo Intermediate"
+        | "Tap Dance I"
+        | "Tap Dance II"
+        | "Tap Dance III"
+        | "Theatre Arts Exploration "
+        | "Theatre Arts I"
+        | "U.S History "
+        | "Visual Arts Exploration"
+        | "Vocal Ensemble"
+        | "World History"
+        | "World Languages:"
+        | "Yearbook"
+        | "Yoga"
+        | "Zoology"
+      subject2: "Math" | "English" | "Social Studies"
     }
     CompositeTypes: {
       [_ in never]: never
