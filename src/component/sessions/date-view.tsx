@@ -125,6 +125,7 @@ function SessionCard({
   }
 
   async function togglePresence(student_id: string) {
+    if (!role?.is_teacher) return;
     setLoading(true);
     let record = session.enroll.find((e) => e.student_id === student_id);
     await supabase
