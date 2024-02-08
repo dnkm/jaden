@@ -44,11 +44,11 @@ export default function Sessions() {
       supabase
         .from("sessions")
         .select(
-          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+          "*, profiles!sessions_teacher_fkey(full_name), enroll!inner(student_id, is_present, profiles(full_name))"
         )
         .gte("datetime", startOfMonth(d).toISOString())
         .lte("datetime", endOfMonth(d).toISOString())
-        // .eq("enroll.student_id", profile!.id)
+        .eq("enroll.student_id", profile!.id)
         .order("datetime")
         .then(({ data }) => {
           setSessions(data!);

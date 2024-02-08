@@ -1,7 +1,7 @@
 .calendar {
   @apply border-r border-b grid grid-cols-5;
   grid-template-rows: auto;
-  grid-auto-rows: 70px;
+  grid-auto-rows: 80px;
 
   > div {
     @apply border-l border-t p-0.5;

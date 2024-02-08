@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
-import { FaRegCalendar } from "react-icons/fa";
+import { FaChalkboardTeacher, FaRegCalendar } from "react-icons/fa";
 
 export default function Layout() {
   const { profile, role } = useContext(AppContext);
@@ -33,7 +33,10 @@ export default function Layout() {
             )}
             <li>
               <details>
-                <summary>{profile?.full_name}</summary>
+                <summary className="flex items-center">
+                  {profile?.full_name}{" "}
+                  {role?.is_teacher && <FaChalkboardTeacher />}
+                </summary>
                 <ul className="p-2 bg-base-100 rounded-t-none">
                   <li>
                     <button onClick={handleLogout}>Logout</button>

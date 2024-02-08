@@ -33,7 +33,9 @@ export default function DateView({
     let { data } = await supabase
       .from("sessions")
       .insert(entry)
-      .select("*, profiles!sessions_teacher_fkey(full_name)");
+      .select(
+        "*, enroll(student_id, is_present, profiles(full_name))"
+      );
     setSessions((p: SessionsWithTeachername[]) => [...p, ...data!]);
     setLoading(false);
   }
