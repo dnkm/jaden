@@ -32,6 +32,15 @@ export default function FindSession() {
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>
+              <Link to="/">
+                <button className="btn btn-primary">NONE</button>
+              </Link>
+            </td>
+          </tr>
           {teachers.map((p) => (
             <tr key={p.id}>
               <td>{p.full_name}</td>
