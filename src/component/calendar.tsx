@@ -59,7 +59,7 @@ function Cell({
   return (
     <div
       className={`hover:bg-base-300 cursor-pointer select-none ${
-        highlighted ? "bg-base-200" : ""
+        highlighted ? "bg-neutral" : ""
       }`}
       onClick={() => onDateClicked(d)}
     >

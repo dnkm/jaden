@@ -54,10 +54,16 @@ export default function TeacherSubjects() {
   return (
     <div>
       <h1>Subjects</h1>
+      <div>
+        These subjects are utilized by students to refine their search results
+      </div>
+      <div className="divider"></div>
       <div className="flex flex-wrap">
         {subjects.map((subject) => (
           <button
-            className={`btn m-0.5 ${mySubjects.includes(subject.subject_id) ? 'btn-primary' : ''}`}
+            className={`btn m-0.5 ${
+              mySubjects.includes(subject.subject_id) ? "btn-primary" : ""
+            }`}
             key={subject.subject_id}
             disabled={!!loadingSubjectId}
             onClick={() => handleToggle(subject.subject_id)}

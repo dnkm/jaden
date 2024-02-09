@@ -1,8 +1,9 @@
 import { useContext } from "react";
+import { BsPersonCircle } from "react-icons/bs";
+import { FaChalkboardTeacher, FaRegCalendar } from "react-icons/fa";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
-import { FaChalkboardTeacher, FaRegCalendar } from "react-icons/fa";
 
 export default function Layout() {
   const { profile, role } = useContext(AppContext);
@@ -24,6 +25,11 @@ export default function Layout() {
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
+            {!role?.is_teacher && (
+              <li>
+                <Link to="/student/find">Find a session</Link>
+              </li>
+            )}
             {role?.is_teacher && (
               <>
                 <li>
@@ -32,10 +38,9 @@ export default function Layout() {
               </>
             )}
             <li>
-              <details>
-                <summary className="flex items-center">
-                  {profile?.full_name}{" "}
-                  {role?.is_teacher && <FaChalkboardTeacher />}
+              <details className="flex items-center">
+                <summary className="">
+                  <BsPersonCircle className={`text-xl ${role?.is_teacher ? "text-yellow-400" : ""}`} />
                 </summary>
                 <ul className="p-2 bg-base-100 rounded-t-none">
                   <li>

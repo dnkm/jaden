@@ -4,7 +4,7 @@
   grid-auto-rows: 80px;
 
   > div {
-    @apply border-l border-t p-0.5;
+    @apply border-l border-t p-1;
   }
 
   > div:nth-child(7n+1), > div:nth-child(7n) {
