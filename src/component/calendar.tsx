@@ -1,8 +1,9 @@
 import { format, getDaysInMonth, setDate } from "date-fns";
-import { SessionsWithTeachername } from "./sessions/component";
-import classes from "./calendar.module.scss";
 import { useContext } from "react";
 import { AppContext } from "../App";
+import classes from "./calendar.module.scss";
+import { SessionWithTeachername } from "./sessions/component";
+import { Tables } from "../../types/supabase";
 
 export default function Calendar({
   d,
@@ -11,7 +12,7 @@ export default function Calendar({
 }: {
   d: Date;
   onDateClicked?: (date: Date) => void;
-  sessionsMap: { [key: number]: SessionsWithTeachername[] };
+  sessionsMap: { [key: number]: SessionWithTeachername[] };
 }) {
   return (
     <div>
@@ -50,7 +51,7 @@ function Cell({
   highlighted,
 }: {
   d: Date;
-  sessions: SessionsWithTeachername[];
+  sessions: SessionWithTeachername[];
   onDateClicked: (date: Date) => void;
   highlighted: boolean;
 }) {
@@ -73,7 +74,7 @@ function Cell({
           <div
             key={v.session_id}
             className={`badge space-x-1 ${
-              !!v.enroll.find((e) => e.student_id === role?.id)
+              !!v.enroll.find((e: Partial<Tables<'enroll'>>) => e.student_id === role?.id)
                 ? "badge-accent"
                 : ""
             }`}

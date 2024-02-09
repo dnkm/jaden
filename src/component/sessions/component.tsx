@@ -19,7 +19,6 @@ const sessionsWithTeachernameQuery = supabase
     "*, profiles(full_name), enroll(student_id, is_present, profiles(full_name))"
   );
 type SessionsWithTeachername = QueryData<typeof sessionsWithTeachernameQuery>;
-
 export type SessionWithTeachername = SessionsWithTeachername[number];
 
 export default function Sessions() {

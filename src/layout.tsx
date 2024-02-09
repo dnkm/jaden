@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
-import { FaChalkboardTeacher, FaRegCalendar } from "react-icons/fa";
+import { FaRegCalendar } from "react-icons/fa";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
 
 export default function Layout() {
-  const { profile, role } = useContext(AppContext);
+  const { role } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
