@@ -1,18 +1,17 @@
 import { format, set } from "date-fns";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { AppContext } from "../../../App";
 import { supabase } from "../../../supabaseClient";
-import { SessionsWithTeachername } from "../component";
+import { SessionWithTeachername } from "../component";
 import SessionForm from "../session-form";
-import AvailableSessions from "./available-sessions";
 
 export default function DateView({
   sessions,
   selectedDate,
   setSessions,
 }: {
-  sessions: SessionsWithTeachername[];
+  sessions: SessionWithTeachername[];
   selectedDate: Date;
   setSessions: Function;
 }) {
@@ -35,7 +34,7 @@ export default function DateView({
       .from("sessions")
       .insert(entry)
       .select("*, enroll(student_id, is_present, profiles(full_name))");
-    setSessions((p: SessionsWithTeachername[]) => [...p, ...data!]);
+    setSessions((p: SessionWithTeachername[]) => [...p, ...data!]);
     setLoading(false);
   }
 
@@ -78,7 +77,7 @@ function SessionCard({
   session,
   setSessions,
 }: {
-  session: SessionsWithTeachername;
+  session: SessionWithTeachername;
   setSessions: Function;
 }) {
   const { role, profile, loading, setLoading } = useContext(AppContext);
@@ -88,22 +87,24 @@ function SessionCard({
 
   async function handleSignup() {
     setLoading(true);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("enroll")
       .insert({
         session_id: session.session_id,
         student_id: profile!.id,
       })
-      .select("*, profiles(full_name)");
+      .select("student_id, is_present, profiles(full_name)");
     if (error) {
       alert("Something went wrong!");
     } else {
-      setSessions((p: SessionsWithTeachername[]) =>
-        p.map((s) =>
-          s.session_id === session.session_id
-            ? { ...s, enroll: [{ student_id: profile!.id }] }
-            : s
-        )
+      setSessions((p: SessionWithTeachername[]) =>
+        p.find((s) => s.session_id === session.session_id)
+          ? p.map((s) =>
+              s.session_id === session.session_id
+                ? { ...s, enroll: [{ student_id: profile!.id }] }
+                : s
+            )
+          : [...p, { ...session, enroll: [...session.enroll, data[0]] }]
       );
     }
     setLoading(false);
@@ -119,7 +120,7 @@ function SessionCard({
     if (error) {
       alert("Something went wrong!");
     } else {
-      setSessions((p: SessionsWithTeachername[]) =>
+      setSessions((p: SessionWithTeachername[]) =>
         p.map((s) =>
           s.session_id !== session.session_id ? s : { ...s, enroll: [] }
         )
@@ -137,7 +138,7 @@ function SessionCard({
       .update({ is_present: !record!.is_present })
       .eq("student_id", student_id)
       .eq("session_id", session.session_id);
-    setSessions((p: SessionsWithTeachername[]) =>
+    setSessions((p: SessionWithTeachername[]) =>
       p.map((s) =>
         s.session_id !== session.session_id
           ? s
@@ -158,7 +159,7 @@ function SessionCard({
     <div className="card bg-base-200">
       <div className="card-body">
         <h2 className="card-title flex justify-between">
-          <div>{format(new Date(session.datetime), "h:mm")}</div>
+          <div>{format(new Date(session.datetime), "h:mm")} - {session.session_id}</div>
           <div>{session.profiles?.full_name}</div>
         </h2>
         <div>

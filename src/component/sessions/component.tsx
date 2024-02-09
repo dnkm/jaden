@@ -1,9 +1,4 @@
 import { QueryData } from "@supabase/supabase-js";
-import { useContext, useEffect, useState } from "react";
-import Calendar from "../calendar";
-import { supabase } from "../../supabaseClient";
-import DateView from "./date-view";
-import { AppContext } from "../../App";
 import {
   addMonths,
   endOfMonth,
@@ -11,21 +6,49 @@ import {
   isSameMonth,
   startOfMonth,
 } from "date-fns";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../App";
+import { supabase } from "../../supabaseClient";
+import Calendar from "../calendar";
+import DateView from "./date-view";
+import { useParams } from "react-router-dom";
 
 const sessionsWithTeachernameQuery = supabase
   .from("sessions")
-  .select("*, profiles(full_name), enroll(student_id, is_present, profiles(full_name))")
-  .single();
-export type SessionsWithTeachername = QueryData<
-  typeof sessionsWithTeachernameQuery
->;
+  .select(
+    "*, profiles(full_name), enroll(student_id, is_present, profiles(full_name))"
+  );
+type SessionsWithTeachername = QueryData<typeof sessionsWithTeachernameQuery>;
+
+export type SessionWithTeachername = SessionsWithTeachername[number];
 
 export default function Sessions() {
-  let [sessions, setSessions] = useState<SessionsWithTeachername[]>([]);
+  let [mySessions, setMySessions] = useState<SessionsWithTeachername>([]);
+  let [searchSessions, setSearchSessions] = useState<SessionsWithTeachername>(
+    []
+  );
   let [d, setD] = useState<Date>(new Date());
   let { profile, role } = useContext(AppContext);
+  let { teacher_id } = useParams();
 
-  function load(d: Date) {
+  function loadSearchSessions(d: Date) {
+    if (!teacher_id) {
+      setSearchSessions([]);
+      return;
+    }
+    supabase
+      .from("sessions")
+      .select(
+        "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+      )
+      .eq("teacher", teacher_id)
+      .gte("datetime", startOfMonth(d).toISOString())
+      .lte("datetime", endOfMonth(d).toISOString())
+      .order("datetime")
+      .then(({ data }) => setSearchSessions(data!));
+  }
+
+  function loadMySessions(d: Date) {
     if (role?.is_teacher) {
       supabase
         .from("sessions")
@@ -37,8 +60,7 @@ export default function Sessions() {
         .lte("datetime", endOfMonth(d).toISOString())
         .order("datetime")
         .then(({ data }) => {
-          console.log(data);
-          setSessions(data!);
+          setMySessions(data!);
         });
     } else {
       supabase
@@ -51,27 +73,33 @@ export default function Sessions() {
         .eq("enroll.student_id", profile!.id)
         .order("datetime")
         .then(({ data }) => {
-          setSessions(data!);
+          setMySessions(data!);
         });
     }
   }
 
   useEffect(() => {
-    load(new Date());
+    loadMySessions(new Date());
   }, []);
+
+  useEffect(() => {
+    loadSearchSessions(new Date());
+  }, [teacher_id]);
 
   function changeDate(d2: Date) {
     if (!isSameMonth(d, d2)) {
-      load(d2);
+      loadMySessions(d2);
+      loadSearchSessions(d2);
     }
     setD(d2);
   }
 
-  let sessionsMap = sessions.reduce(
-    (acc: { [key: number]: SessionsWithTeachername[] }, curr) => {
+  let sessionsMap = [...mySessions, ...searchSessions].reduce(
+    (acc: { [key: number]: SessionsWithTeachername }, curr) => {
       let date = new Date(curr.datetime).getDate();
       if (!acc[date]) acc[date] = [];
-      acc[date].push(curr);
+      if (!acc[date].find((s) => s.session_id === curr.session_id))
+        acc[date].push(curr);
       return acc;
     },
     {}
@@ -107,7 +135,7 @@ export default function Sessions() {
       {d && (
         <DateView
           selectedDate={d}
-          setSessions={setSessions}
+          setSessions={setMySessions}
           sessions={sessionsMap[d.getDate()] || []}
         />
       )}

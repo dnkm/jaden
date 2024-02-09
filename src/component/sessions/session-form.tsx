@@ -1,14 +1,14 @@
 import { useContext } from "react";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
-import { SessionsWithTeachername } from "./component";
+import { SessionWithTeachername } from "./component";
 
 export default function SessionForm({
   setSessions,
   session,
 }: {
   setSessions: Function;
-  session: SessionsWithTeachername;
+  session: SessionWithTeachername;
 }) {
   const { loading, setLoading } = useContext(AppContext);
   const modal_id = "edit_session" + session.session_id;
@@ -26,7 +26,7 @@ export default function SessionForm({
     if (error) {
       alert("Something went wrong!");
     } else {
-      setSessions((p: SessionsWithTeachername[]) =>
+      setSessions((p: SessionWithTeachername[]) =>
         p.map((ss) =>
           ss.session_id === session!.session_id ? { ...ss, ...data } : ss
         )
@@ -46,7 +46,7 @@ export default function SessionForm({
     if (error) {
       alert("Something went wrong.");
     } else {
-      setSessions((p: SessionsWithTeachername[]) =>
+      setSessions((p: SessionWithTeachername[]) =>
         p.filter((s) => s.session_id !== session.session_id)
       );
     }
