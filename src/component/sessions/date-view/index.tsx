@@ -159,7 +159,7 @@ function SessionCard({
     <div className="card bg-base-200">
       <div className="card-body">
         <h2 className="card-title flex justify-between">
-          <div>{format(new Date(session.datetime), "h:mm")} - {session.session_id}</div>
+          <div>{format(new Date(session.datetime), "h:mm")}</div>
           <div>{session.profiles?.full_name}</div>
         </h2>
         <div>
