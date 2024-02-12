@@ -104,6 +104,7 @@ export default function Auth() {
             id="grad_year"
             className="select select-bordered"
           >
+            <option value={-1}>Teacher</option>
             {new Array(6).fill(undefined).map((_, i) => (
               <option key={i} value={new Date().getFullYear() + i}>
                 {new Date().getFullYear() + i} ({12 - i}th grade)
