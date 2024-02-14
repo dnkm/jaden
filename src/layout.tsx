@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
 
 export default function Layout() {
   const { role } = useContext(AppContext);
   const navigate = useNavigate();
+  const { teacher_id } = useParams();
+  console.log(123123, teacher_id);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -30,17 +32,14 @@ export default function Layout() {
                 <Link to="/student/find">Find a session</Link>
               </li>
             )}
-            {role?.is_teacher && (
-              <>
-                <li>
-                  <Link to="/teacher/subjects">Subjects</Link>
-                </li>
-              </>
-            )}
             <li>
               <details className="flex items-center">
                 <summary className="">
-                  <BsPersonCircle className={`text-xl ${role?.is_teacher ? "text-yellow-400" : ""}`} />
+                  <BsPersonCircle
+                    className={`text-xl ${
+                      role?.is_teacher ? "text-yellow-400" : ""
+                    }`}
+                  />
                 </summary>
                 <ul className="p-2 bg-base-100 rounded-t-none">
                   <li>
