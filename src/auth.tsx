@@ -6,6 +6,7 @@ export default function Auth() {
   const [signinError, setSigninError] = useState<string | undefined>(undefined);
   const [signupError, setSignupError] = useState<string | undefined>(undefined);
   const [processing, setProcessing] = useState<boolean>(false);
+  const [gradYear, setGradYear] = useState<number>(new Date().getFullYear());
   const nav = useNavigate();
 
   const handleSignUp = async (ev: React.SyntheticEvent<HTMLFormElement>) => {
@@ -20,6 +21,7 @@ export default function Auth() {
         data: {
           full_name: ev.currentTarget["full_name"].value,
           grad_year: parseInt(ev.currentTarget["grad_year"].value, 10),
+          teacher_code: ev.currentTarget["teacher_code"].value,
         },
       },
     };
@@ -48,7 +50,7 @@ export default function Auth() {
     <div>
       {/* login form */}
       <form className="form p-10 space-y-5" onSubmit={handleSignIn}>
-        <h1>Sign In</h1>
+        <h1 className="divider">Sign In</h1>
         <div className="form-control">
           <label htmlFor="email2">Email</label>
           <input id="email2" name="email" className="input input-bordered" />
@@ -72,7 +74,7 @@ export default function Auth() {
 
       {/* sign up form */}
       <form className="form p-10 space-y-5" onSubmit={handleSignUp}>
-        <h1>Sign Up</h1>
+        <h1 className="divider">Sign Up</h1>
         <div className="form-control">
           <label htmlFor="email">Email</label>
           <input id="email" name="email" className="input input-bordered" />
@@ -103,15 +105,29 @@ export default function Auth() {
             name="grad_year"
             id="grad_year"
             className="select select-bordered"
+            value={gradYear}
+            onChange={(ev) => setGradYear(parseInt(ev.target.value, 10))}
           >
-            <option value={-1}>Teacher</option>
             {new Array(6).fill(undefined).map((_, i) => (
               <option key={i} value={new Date().getFullYear() + i}>
                 {new Date().getFullYear() + i} ({12 - i}th grade)
               </option>
             ))}
+            <option value={-1}>Teacher</option>
           </select>
+          <pre>{gradYear}</pre>
         </div>
+
+        {gradYear === -1 && (
+          <div className="form-control">
+            <label htmlFor="teacher_code">Teacher Code</label>
+            <input
+              id="teacher_code"
+              name="teacher_code"
+              className="input input-bordered"
+            />
+          </div>
+        )}
 
         <button className="btn btn-primary" disabled={processing}>
           Sign up
