@@ -9,7 +9,6 @@ export default function Layout() {
   const { role } = useContext(AppContext);
   const navigate = useNavigate();
   const { teacher_id } = useParams();
-  console.log(123123, teacher_id);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
