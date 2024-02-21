@@ -73,20 +73,21 @@ function Cell({
         {sessions.map((v) => (
           <div
             key={v.session_id}
-            className={`badge space-x-1 ${
-              !!v.enroll.find((e: Partial<Tables<'enroll'>>) => e.student_id === role?.id)
-                ? "badge-accent"
-                : ""
+            className={`space-x-1 text-sm p-0.5 rounded-lg overflow-hidden ${
+              !!v.enroll.find(
+                (e: Partial<Tables<"enroll">>) => e.student_id === role?.id
+              )
+                ? "bg-primary text-primary-content"
+                : "bg-neutral text-neutral-content"
             }`}
           >
-            <span className="font-bold">
-              {format(new Date(v.datetime), "h:mm")}{" "}
-              {role?.is_teacher && <>({v.enroll.length})</>}
-            </span>
-            {/* <span>{v.profiles?.full_name}</span> */}
-            {/* <span>
-              {v.taken}/{v.limit}
-            </span> */}
+            <div>
+              <div className="font-bold">
+                {format(new Date(v.datetime), "h:mm")}{" "}
+                {/* {role?.is_teacher && <>({v.enroll.length})</>} */}
+              </div>
+              {v.name && <div>{v.name}</div>}
+            </div>
           </div>
         ))}
       </div>

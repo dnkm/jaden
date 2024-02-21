@@ -44,14 +44,12 @@ function App() {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        console.log("init login detected");
         loadUserData(session.user.id);
       }
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session && !profile) {
-        console.log("login detected");
         loadUserData(session.user.id);
       } else {
         setProfile(null);

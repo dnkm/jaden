@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       enroll: {
@@ -98,7 +98,7 @@ export interface Database {
             foreignKeyName: "roles_id_fkey"
             columns: ["id"]
             isOneToOne: true
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]
@@ -108,6 +108,7 @@ export interface Database {
           created_at: string
           datetime: string
           limit: number
+          name: string | null
           session_id: number
           taken: number
           teacher: string
@@ -116,6 +117,7 @@ export interface Database {
           created_at?: string
           datetime: string
           limit: number
+          name?: string | null
           session_id?: number
           taken?: number
           teacher: string
@@ -124,6 +126,7 @@ export interface Database {
           created_at?: string
           datetime?: string
           limit?: number
+          name?: string | null
           session_id?: number
           taken?: number
           teacher?: string

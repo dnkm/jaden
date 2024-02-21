@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { SyntheticEvent, useContext } from "react";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
 import { SessionWithTeachername } from "./component";
@@ -13,11 +13,12 @@ export default function SessionForm({
   const { loading, setLoading } = useContext(AppContext);
   const modal_id = "edit_session" + session.session_id;
 
-  async function handleUpdate(ev: any) {
+  async function handleUpdate(ev: SyntheticEvent<HTMLFormElement>) {
     ev.preventDefault();
     setLoading(true);
-    let data = { limit: parseInt(ev.target.limit.value) };
-    console.log(123, data, session.session_id);
+    let data = Object.fromEntries(
+      new FormData(ev.target as HTMLFormElement).entries()
+    );
     let { error } = await supabase
       .from("sessions")
       .update(data)
@@ -83,6 +84,17 @@ export default function SessionForm({
               ))}
             </div>
           </div> */}
+
+          <div className="form-control">
+            <label htmlFor="session-name-input">Session Name</label>
+            <input
+              id="session-name-input"
+              className="input input-bordered"
+              type="text"
+              defaultValue={session.name || ""}
+              name="name"
+            />
+          </div>
 
           {/* number of students */}
           <div className="form-control">

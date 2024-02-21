@@ -115,7 +115,6 @@ export default function Auth() {
             ))}
             <option value={-1}>Teacher</option>
           </select>
-          <pre>{gradYear}</pre>
         </div>
 
         {gradYear === -1 && (
