@@ -1,10 +1,11 @@
 .calendar {
   @apply border-r border-b grid grid-cols-5;
   grid-template-rows: auto;
-  grid-auto-rows: 100px;
+  // grid-auto-rows: 100px;
 
   > div {
     @apply border-l border-t p-1;
+    min-height: 100px;
   }
 
   > div:nth-child(7n+1), > div:nth-child(7n) {

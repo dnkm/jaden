@@ -59,7 +59,7 @@ function Cell({
 
   return (
     <div
-      className={`hover:bg-base-300 cursor-pointer select-none ${
+      className={`hover:bg-base-200 cursor-pointer select-none ${
         highlighted ? "bg-neutral" : ""
       }`}
       onClick={() => onDateClicked(d)}
@@ -73,12 +73,12 @@ function Cell({
         {sessions.map((v) => (
           <div
             key={v.session_id}
-            className={`space-x-1 text-sm p-0.5 rounded-lg overflow-hidden ${
+            className={`space-x-1 text-sm py-0.5 px-1 rounded-lg overflow-hidden ${
               !!v.enroll.find(
                 (e: Partial<Tables<"enroll">>) => e.student_id === role?.id
               )
                 ? "bg-primary text-primary-content"
-                : "bg-neutral text-neutral-content"
+                : "bg-base-300 text-neutral-content"
             }`}
           >
             <div>
