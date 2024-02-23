@@ -21,7 +21,7 @@ export default function Auth() {
         data: {
           full_name: ev.currentTarget["full_name"].value,
           grad_year: parseInt(ev.currentTarget["grad_year"].value, 10),
-          teacher_code: ev.currentTarget["teacher_code"].value,
+          teacher_code: ev.currentTarget["teacher_code"]?.value || -1,
         },
       },
     };
