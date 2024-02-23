@@ -1,15 +1,13 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
 
 export default function Layout() {
   const { role } = useContext(AppContext);
   const navigate = useNavigate();
-  const { teacher_id } = useParams();
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate(0);
