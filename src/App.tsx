@@ -7,6 +7,8 @@ import Layout from "./layout";
 import FindSession from "./student/FindSession";
 import { supabase } from "./supabaseClient";
 import TeacherSubjects from "./teacher/subjects";
+import PrivacyPolicy from "./other/privacy";
+import TOS from "./other/tos";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
@@ -76,6 +78,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Sessions />} />
+              <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+              <Route path="/tos" element={<TOS />} />
               <Route path="/teacher/subjects" element={<TeacherSubjects />} />
               <Route path="/student/find" element={<FindSession />} />
               <Route
