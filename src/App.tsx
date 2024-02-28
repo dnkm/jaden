@@ -4,11 +4,11 @@ import { Tables } from "../types/supabase";
 import Auth from "./auth";
 import Sessions from "./component/sessions/component";
 import Layout from "./layout";
+import PrivacyPolicy from "./other/privacy";
+import TOS from "./other/tos";
 import FindSession from "./student/FindSession";
 import { supabase } from "./supabaseClient";
 import TeacherSubjects from "./teacher/subjects";
-import PrivacyPolicy from "./other/privacy";
-import TOS from "./other/tos";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
@@ -62,34 +62,33 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      {!profile ? (
-        <Auth />
-      ) : (
-        <AppContext.Provider
-          value={{
-            role,
-            profile,
-            loading,
-            setLoading,
-            teacherFilter,
-            setTeacherFilter,
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path="/" element={<Sessions />} />
-              <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-              <Route path="/tos" element={<TOS />} />
-              <Route path="/teacher/subjects" element={<TeacherSubjects />} />
-              <Route path="/student/find" element={<FindSession />} />
-              <Route
-                path="/student/find/:teacher_name/:teacher_id"
-                element={<Sessions />}
-              />
-            </Route>
-          </Routes>
-        </AppContext.Provider>
-      )}
+      <AppContext.Provider
+        value={{
+          role,
+          profile,
+          loading,
+          setLoading,
+          teacherFilter,
+          setTeacherFilter,
+        }}
+      >
+        <Routes>
+          <Route element={<Layout useronly={false} />}>
+            <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+            <Route path="/tos" element={<TOS />} />
+            <Route path="/auth" element={<Auth />} />
+          </Route>
+          <Route element={<Layout useronly={true} />}>
+            <Route path="/" element={<Sessions />} />
+            <Route path="/teacher/subjects" element={<TeacherSubjects />} />
+            <Route path="/student/find" element={<FindSession />} />
+            <Route
+              path="/student/find/:teacher_name/:teacher_id"
+              element={<Sessions />}
+            />
+          </Route>
+        </Routes>
+      </AppContext.Provider>
     </div>
   );
 }

@@ -13,3 +13,7 @@ h2 {
 h3 {
   @apply text-lg mt-1;
 }
+
+.center {
+  @apply flex flex-col items-center justify-center;
+}

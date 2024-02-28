@@ -1,17 +1,20 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
+import Auth from "./auth";
 
-export default function Layout() {
-  const { role } = useContext(AppContext);
+export default function Layout({ useronly }: { useronly: boolean }) {
+  const { role, profile } = useContext(AppContext);
   const navigate = useNavigate();
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate(0);
   };
+
+  if (!role && useronly) return <Auth />;
 
   return (
     <div>
@@ -24,7 +27,7 @@ export default function Layout() {
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
-            {!role?.is_teacher && (
+            {!role?.is_teacher && role && (
               <li>
                 <Link to="/student/find">Find a session</Link>
               </li>
@@ -37,8 +40,9 @@ export default function Layout() {
                       role?.is_teacher ? "text-yellow-400" : ""
                     }`}
                   />
+                  {profile?.full_name}
                 </summary>
-                <ul className="p-2 bg-base-100 rounded-t-none">
+                <ul className="p-2 bg-base-300 rounded-t-none">
                   <li>
                     <button onClick={handleLogout}>Logout</button>
                   </li>
