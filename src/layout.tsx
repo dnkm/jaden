@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
-import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AppContext } from "./App";
-import { supabase } from "./supabaseClient";
 import Auth from "./auth";
+import { supabase } from "./supabaseClient";
 
 export default function Layout({ useronly }: { useronly: boolean }) {
   const { role, profile } = useContext(AppContext);
