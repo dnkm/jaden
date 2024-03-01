@@ -1,5 +1,5 @@
-import { createContext, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { createContext, useContext, useEffect, useState } from "react";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
 import Sessions from "./component/sessions/component";
@@ -9,6 +9,7 @@ import TOS from "./other/tos";
 import FindSession from "./student/FindSession";
 import { supabase } from "./supabaseClient";
 import TeacherSubjects from "./teacher/subjects";
+import Redirect from "./redirect";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
@@ -73,24 +74,36 @@ function App() {
         }}
       >
         <Routes>
-          <Route element={<Layout useronly={false} />}>
+          <Route element={<Layout />}>
+            <Route path="/redirect" element={<Redirect />} />
             <Route path="/privacypolicy" element={<PrivacyPolicy />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/auth" element={<Auth />} />
-          </Route>
-          <Route element={<Layout useronly={true} />}>
-            <Route path="/" element={<Sessions />} />
-            <Route path="/teacher/subjects" element={<TeacherSubjects />} />
-            <Route path="/student/find" element={<FindSession />} />
-            <Route
-              path="/student/find/:teacher_name/:teacher_id"
-              element={<Sessions />}
-            />
+            <Route element={<AuthenticatedRoute />}>
+              <Route path="/" element={<Sessions />} />
+              <Route path="/teacher/subjects" element={<TeacherSubjects />} />
+              <Route path="/student/find" element={<FindSession />} />
+              <Route
+                path="/student/find/:teacher_name/:teacher_id"
+                element={<Sessions />}
+              />
+            </Route>
           </Route>
         </Routes>
       </AppContext.Provider>
     </div>
   );
+}
+
+function AuthenticatedRoute() {
+  const { profile } = useContext(AppContext);
+  const location = useLocation();
+
+  if (profile) return <Outlet />;
+  else {
+    localStorage.setItem("redirectTo", location.pathname);
+    return <Navigate to={`/auth`} replace />;
+  }
 }
 
 export default App;
