@@ -14,7 +14,7 @@ export default function Auth() {
   }
 
   return (
-    <div className="h-screen center space-y-5">
+    <div className="center space-y-5 flex-1">
       <div className="text-3xl font-bold">Study Sync</div>
       <div>
         <button className="btn btn-neutral" onClick={handleGooglesignin}>

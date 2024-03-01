@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { Fragment, createContext, useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
@@ -62,7 +62,7 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <Fragment>
       <AppContext.Provider
         value={{
           role,
@@ -91,7 +91,7 @@ function App() {
           </Route>
         </Routes>
       </AppContext.Provider>
-    </div>
+    </Fragment>
   );
 }
 

@@ -14,7 +14,7 @@ export default function Layout() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <nav className="navbar bg-neutral text-neutral-content">
         <div className="flex-1">
           <Link to="/" className="btn btn-ghost text-xl">
@@ -48,11 +48,11 @@ export default function Layout() {
         </div>
       </nav>
 
-      <main className="container mx-auto p-5">
+      <main className="container mx-auto p-5 flex-1 flex flex-col">
         <Outlet />
       </main>
 
-      <footer>
+      <footer className="p-4 flex justify-center space-x-5 bg-neutral">
         <Link to="/tos">Terms</Link>
         <Link to="/privacypolicy">Privacy Policy</Link>
       </footer>
