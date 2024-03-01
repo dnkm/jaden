@@ -78,7 +78,7 @@ function Cell({
                 (e: Partial<Tables<"enroll">>) => e.student_id === role?.id
               )
                 ? "bg-primary text-primary-content"
-                : "bg-base-300 text-neutral-content"
+                : "bg-secondary text-secondary-content"
             }`}
           >
             <div>

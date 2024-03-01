@@ -5,49 +5,35 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
 import Sessions from "./component/sessions/component";
 import Layout from "./layout";
 import PrivacyPolicy from "./other/privacy";
 import TOS from "./other/tos";
+import Redirect from "./redirect";
 import FindSession from "./student/FindSession";
 import { supabase } from "./supabaseClient";
 import TeacherSubjects from "./teacher/subjects";
-import Redirect from "./redirect";
 
 type AppContextType = {
   profile: Tables<"profiles"> | null;
   role: Tables<"roles"> | null;
   loading: boolean;
-  setLoading: Function; // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  teacherFilter: string[];
-  setTeacherFilter: Function;
+  setLoading: (isLoading: boolean) => void; // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 };
 export const AppContext = createContext<AppContextType>({
   profile: null,
   role: null,
   loading: false,
   setLoading: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  teacherFilter: [],
-  setTeacherFilter: () => {},
 });
 
 function App() {
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [role, setRole] = useState<Tables<"roles"> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [teacherFilter, setTeacherFilter] = useState<string[]>([]);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUserData = (id: string) => {
@@ -84,8 +70,6 @@ function App() {
           profile,
           loading,
           setLoading,
-          teacherFilter,
-          setTeacherFilter,
         }}
       >
         <Routes>
