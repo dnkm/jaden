@@ -1,5 +1,18 @@
-import { Fragment, createContext, useContext, useEffect, useState } from "react";
-import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Fragment,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Tables } from "../types/supabase";
 import Auth from "./auth";
 import Sessions from "./component/sessions/component";
@@ -33,6 +46,8 @@ function App() {
   const [role, setRole] = useState<Tables<"roles"> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [teacherFilter, setTeacherFilter] = useState<string[]>([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUserData = (id: string) => {
@@ -102,7 +117,7 @@ function AuthenticatedRoute() {
   if (profile) return <Outlet />;
   else {
     localStorage.setItem("redirectTo", location.pathname);
-    return <Navigate to={`/auth`} replace />;
+    return <Auth />;
   }
 }
 

@@ -2,8 +2,6 @@ import { FcGoogle } from "react-icons/fc";
 import { supabase } from "./supabaseClient";
 
 export default function Auth() {
-  console.log("full url", window.location.href);
-
   async function handleGooglesignin() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
