@@ -20,7 +20,7 @@ export default function SessionCard({
 
   async function handleSignup() {
     setLoading(true);
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("enroll")
       .insert({
         session_id: session.session_id,
