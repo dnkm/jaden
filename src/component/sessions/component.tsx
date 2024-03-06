@@ -1,54 +1,59 @@
 import { QueryData } from "@supabase/supabase-js";
-import {
-  addMonths,
-  endOfMonth,
-  format,
-  isSameMonth,
-  startOfMonth,
-} from "date-fns";
+import { addMonths, endOfMonth, format, startOfMonth } from "date-fns";
 import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { AppContext } from "../../App";
 import { supabase } from "../../supabaseClient";
 import Calendar from "../calendar";
 import DateView from "./date-view";
-import { useParams } from "react-router-dom";
 
 const sessionsWithTeachernameQuery = supabase
   .from("sessions")
   .select(
-    "*, profiles(full_name), enroll(student_id, is_present, profiles(full_name))"
+    "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
   );
 type SessionsWithTeachername = QueryData<typeof sessionsWithTeachernameQuery>;
 export type SessionWithTeachername = SessionsWithTeachername[number];
 
 export default function Sessions() {
-  let [mySessions, setMySessions] = useState<SessionsWithTeachername>([]);
-  let [searchSessions, setSearchSessions] = useState<SessionsWithTeachername>(
-    []
-  );
+  let [sessions, setSessions] = useState<SessionsWithTeachername>([]);
   let [d, setD] = useState<Date>(new Date());
   let { profile, role } = useContext(AppContext);
   let { teacher_id } = useParams();
 
-  function loadSearchSessions(d: Date) {
-    if (!teacher_id) {
-      setSearchSessions([]);
-      return;
-    }
-    supabase
+  async function updateSession(session_id: number) {
+    let { data } = await supabase
       .from("sessions")
       .select(
         "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
       )
-      .eq("teacher", teacher_id)
-      .gte("datetime", startOfMonth(d).toISOString())
-      .lte("datetime", endOfMonth(d).toISOString())
-      .order("datetime")
-      .then(({ data }) => setSearchSessions(data!));
+      .eq("session_id", session_id);
+
+    if (data?.length == 0) {
+      // deleted
+      setSessions((prev) => prev.filter((v) => v.session_id !== session_id));
+    } else if (sessions.find((v) => v.session_id === session_id)) {
+      setSessions((prev) =>
+        prev.map((v) => (v.session_id === session_id ? data![0] : v))
+      );
+    } else {
+      setSessions((prev) => [...prev, data![0]]);
+    }
   }
 
-  function loadMySessions(d: Date) {
-    if (role?.is_teacher) {
+  function loadSessions() {
+    if (teacher_id) {
+      supabase
+        .from("sessions")
+        .select(
+          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+        )
+        .eq("teacher", teacher_id)
+        .gte("datetime", startOfMonth(d).toISOString())
+        .lte("datetime", endOfMonth(d).toISOString())
+        .order("datetime")
+        .then(({ data }) => setSessions(data!));
+    } else if (role?.is_teacher) {
       supabase
         .from("sessions")
         .select(
@@ -59,7 +64,7 @@ export default function Sessions() {
         .lte("datetime", endOfMonth(d).toISOString())
         .order("datetime")
         .then(({ data }) => {
-          setMySessions(data!);
+          setSessions(data!);
         });
     } else {
       supabase
@@ -72,28 +77,16 @@ export default function Sessions() {
         .eq("enroll.student_id", profile!.id)
         .order("datetime")
         .then(({ data }) => {
-          setMySessions(data!);
+          setSessions(data!);
         });
     }
   }
 
   useEffect(() => {
-    loadMySessions(new Date());
-  }, []);
+    loadSessions();
+  }, [teacher_id, d]);
 
-  useEffect(() => {
-    loadSearchSessions(new Date());
-  }, [teacher_id]);
-
-  function changeDate(d2: Date) {
-    if (!isSameMonth(d, d2)) {
-      loadMySessions(d2);
-      loadSearchSessions(d2);
-    }
-    setD(d2);
-  }
-
-  let sessionsMap = [...mySessions, ...searchSessions].reduce(
+  let sessionsMap = sessions.reduce(
     (acc: { [key: number]: SessionsWithTeachername }, curr) => {
       let date = new Date(curr.datetime).getDate();
       if (!acc[date]) acc[date] = [];
@@ -112,29 +105,29 @@ export default function Sessions() {
         <div className="join">
           <button
             className="btn btn-sm btn-primary join-item"
-            onClick={() => changeDate(addMonths(d, -1))}
+            onClick={() => setD(addMonths(d, -1))}
           >
             {"<"}
           </button>
           <button
             className="btn btn-sm btn-primary join-item"
-            onClick={() => changeDate(new Date())}
+            onClick={() => setD(new Date())}
           >
             Today
           </button>
           <button
             className="btn btn-sm btn-primary join-item"
-            onClick={() => changeDate(addMonths(d, 1))}
+            onClick={() => setD(addMonths(d, 1))}
           >
             {">"}
           </button>
         </div>
       </div>
-      <Calendar onDateClicked={changeDate} sessionsMap={sessionsMap} d={d} />
+      <Calendar onDateClicked={setD} sessionsMap={sessionsMap} d={d} />
       {d && (
         <DateView
           selectedDate={d}
-          setSessions={setMySessions}
+          updateSession={updateSession}
           sessions={sessionsMap[d.getDate()] || []}
         />
       )}

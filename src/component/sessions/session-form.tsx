@@ -4,10 +4,10 @@ import { supabase } from "../../supabaseClient";
 import { SessionWithTeachername } from "./component";
 
 export default function SessionForm({
-  setSessions,
+  updateSession,
   session,
 }: {
-  setSessions: Function;
+  updateSession: Function;
   session: SessionWithTeachername;
 }) {
   const { loading, setLoading } = useContext(AppContext);
@@ -27,11 +27,7 @@ export default function SessionForm({
     if (error) {
       alert("Something went wrong!");
     } else {
-      setSessions((p: SessionWithTeachername[]) =>
-        p.map((ss) =>
-          ss.session_id === session!.session_id ? { ...ss, ...data } : ss
-        )
-      );
+      updateSession(session.session_id);
     }
     setLoading(false);
     (document.getElementById(modal_id) as HTMLDialogElement).close();
@@ -47,9 +43,7 @@ export default function SessionForm({
     if (error) {
       alert("Something went wrong.");
     } else {
-      setSessions((p: SessionWithTeachername[]) =>
-        p.filter((s) => s.session_id !== session.session_id)
-      );
+      updateSession(session.session_id);
     }
     setLoading(false);
     (document.getElementById(modal_id) as HTMLDialogElement).close();

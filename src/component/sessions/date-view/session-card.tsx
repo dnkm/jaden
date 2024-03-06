@@ -8,10 +8,10 @@ import SessionForm from "../session-form";
 
 export default function SessionCard({
   session,
-  setSessions,
+  updateSession,
 }: {
   session: SessionWithTeachername;
-  setSessions: Function;
+  updateSession: Function;
 }) {
   const { role, profile, loading, setLoading } = useContext(AppContext);
   let signedup: boolean = !!session.enroll.find(
@@ -28,17 +28,9 @@ export default function SessionCard({
       })
       .select("student_id, is_present, profiles(full_name)");
     if (error) {
-      alert("Something went wrong!");
+      alert("Oops, looks like you are already enrolled");
     } else {
-      setSessions((p: SessionWithTeachername[]) =>
-        p.find((s) => s.session_id === session.session_id)
-          ? p.map((s) =>
-              s.session_id === session.session_id
-                ? { ...s, enroll: [{ student_id: profile!.id }] }
-                : s
-            )
-          : [...p, { ...session, enroll: [...session.enroll, data[0]] }]
-      );
+      updateSession(session.session_id);
     }
     setLoading(false);
   }
@@ -53,11 +45,7 @@ export default function SessionCard({
     if (error) {
       alert("Something went wrong!");
     } else {
-      setSessions((p: SessionWithTeachername[]) =>
-        p.map((s) =>
-          s.session_id !== session.session_id ? s : { ...s, enroll: [] }
-        )
-      );
+      updateSession(session.session_id);
     }
     setLoading(false);
   }
@@ -71,22 +59,11 @@ export default function SessionCard({
       .update({ is_present: !record!.is_present })
       .eq("student_id", student_id)
       .eq("session_id", session.session_id);
-    setSessions((p: SessionWithTeachername[]) =>
-      p.map((s) =>
-        s.session_id !== session.session_id
-          ? s
-          : {
-              ...s,
-              enroll: session.enroll.map((en) =>
-                en.student_id === student_id
-                  ? { ...en, is_present: !en.is_present }
-                  : en
-              ),
-            }
-      )
-    );
+    updateSession(session.session_id);
     setLoading(false);
   }
+
+  const isFull = session.limit <= session.taken;
 
   return (
     <div className="card bg-base-200">
@@ -125,6 +102,8 @@ export default function SessionCard({
             <button className="btn btn-warning" onClick={handleCancel}>
               Cancel
             </button>
+          ) : isFull ? (
+            <button className="btn btn-disabled">Full</button>
           ) : (
             <button
               className="btn btn-primary"
@@ -137,7 +116,7 @@ export default function SessionCard({
         </div>
       </div>
 
-      <SessionForm setSessions={setSessions} session={session} />
+      <SessionForm updateSession={updateSession} session={session} />
     </div>
   );
 }

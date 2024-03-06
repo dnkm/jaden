@@ -22,36 +22,20 @@ export default function FindSession() {
     <div className="space-y-3">
       <h1>Find a session</h1>
       <div className="divider"></div>
-      <h2>Teachers</h2>
       <table className="table table-zebra">
         <thead>
           <tr className="bg-base-300">
-            <th>Name</th>
-            <th>Subjects</th>
+            <th>Teacher</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td>
-              <Link to="/">
-                <button className="btn btn-primary">NONE</button>
-              </Link>
-            </td>
-          </tr>
           {teachers.map((p) => (
             <tr key={p.id}>
               <td>{p.full_name}</td>
               <td>
-                {p.subjects.map((s) => (
-                  <div key={s.subject_id}>{s.name}</div>
-                ))}
-              </td>
-              <td>
                 <Link to={`/student/find/${p.full_name}/${p.id}`}>
-                  <button className="btn btn-primary">Sessions</button>
+                  <button className="btn btn-primary">Select</button>
                 </Link>
               </td>
             </tr>

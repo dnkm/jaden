@@ -8,11 +8,11 @@ import SessionCard from "./session-card";
 export default function DateView({
   sessions,
   selectedDate,
-  setSessions,
+  updateSession,
 }: {
   sessions: SessionWithTeachername[];
   selectedDate: Date;
-  setSessions: Function;
+  updateSession: Function;
 }) {
   const { role, profile, loading, setLoading } = useContext(AppContext);
 
@@ -32,8 +32,9 @@ export default function DateView({
     let { data } = await supabase
       .from("sessions")
       .insert(entry)
-      .select("*, enroll(student_id, is_present, profiles(full_name))");
-    setSessions((p: SessionWithTeachername[]) => [...p, ...data!]);
+      .select()
+      .single();
+    updateSession(data?.session_id);
     setLoading(false);
   }
 
@@ -63,7 +64,7 @@ export default function DateView({
             <SessionCard
               session={s}
               key={s.session_id}
-              setSessions={setSessions}
+              updateSession={updateSession}
             />
           ))}
         </div>

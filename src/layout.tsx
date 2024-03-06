@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { BsPersonCircle } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "./App";
 import { supabase } from "./supabaseClient";
 
 export default function Layout() {
   const { role, profile } = useContext(AppContext);
+  let { teacher_id, teacher_name } = useParams();
+
   const navigate = useNavigate();
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -24,9 +26,25 @@ export default function Layout() {
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to="/student/find">Find a session</Link>
-            </li>
+            {teacher_id ? (
+              <div className="center">
+                <div className="join">
+                  <button className="btn btn-sm btn-accent join-item">
+                    Showing sessions for {teacher_name}
+                  </button>
+                  <Link to="/">
+                    <button className="btn btn-warning btn-sm join-item">
+                      X
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <li>
+                <Link to="/student/find">Find a session</Link>
+              </li>
+            )}
+
             <li>
               <details className="flex items-center">
                 <summary className="">
