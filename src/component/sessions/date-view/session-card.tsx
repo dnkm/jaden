@@ -3,8 +3,9 @@ import { SessionWithTeachername } from "../component";
 import { AppContext } from "../../../App";
 import { supabase } from "../../../supabaseClient";
 import { format } from "date-fns";
-import { FaRegEdit } from "react-icons/fa";
+import { FaCheck, FaRegEdit, FaUser } from "react-icons/fa";
 import SessionForm from "../session-form";
+import { FaPerson } from "react-icons/fa6";
 
 export default function SessionCard({
   session,
@@ -50,6 +51,29 @@ export default function SessionCard({
     setLoading(false);
   }
 
+  async function handleChangeNote() {
+    console.log(session.enroll[0].note);
+    if (role?.is_teacher) return;
+    let note = prompt(
+      "enter a note for the teacher",
+      session.enroll[0].note || ""
+    );
+    if (note === null) return;
+
+    setLoading(true);
+    const { error } = await supabase
+      .from("enroll")
+      .update({ note })
+      .eq("student_id", profile!.id)
+      .eq("session_id", session.session_id);
+    if (error) {
+      alert("Something went wrong!");
+    } else {
+      updateSession(session.session_id);
+    }
+    setLoading(false);
+  }
+
   async function togglePresence(student_id: string) {
     if (!role?.is_teacher) return;
     setLoading(true);
@@ -73,14 +97,33 @@ export default function SessionCard({
           <div>{session.name}</div>
           <div className="text-sm">{session.profiles?.full_name}</div>
         </h2>
+        {/* show enrolled students for teachers */}
         <div>
           {session.enroll.map((s) => (
             <div
-              className="badge badge-accent m-0.5 cursor-pointer"
+              className="flex items-center m-0.5 space-x-2 bg-base-300 rounded"
               key={s.student_id}
-              onClick={() => togglePresence(s.student_id)}
             >
-              {s.profiles?.full_name} {s.is_present ? "✔" : ""}
+              <div
+                className="hover:bg-base-100 h-7 w-7 cursor-pointer center"
+                onClick={() => togglePresence(s.student_id)}
+              >
+                {s.is_present ? (
+                  <FaCheck className="text-success" />
+                ) : (
+                  <FaUser className="text-primary" />
+                )}
+              </div>
+              <span className="font-bold">{s.profiles?.full_name}</span>
+              <div className="flex items-center">
+                <div
+                  className="hover:bg-base-100 h-7 w-7 cursor-pointer center"
+                  onClick={() => handleChangeNote()}
+                >
+                  <FaRegEdit className="" />
+                </div>
+                {s.note}
+              </div>
             </div>
           ))}
         </div>

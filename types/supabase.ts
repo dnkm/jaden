@@ -14,6 +14,7 @@ export type Database = {
           cancelled_at: string | null
           created_at: string
           is_present: boolean
+          note: string | null
           session_id: number
           student_id: string
         }
@@ -21,6 +22,7 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           is_present?: boolean
+          note?: string | null
           session_id: number
           student_id: string
         }
@@ -28,6 +30,7 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           is_present?: boolean
+          note?: string | null
           session_id?: number
           student_id?: string
         }

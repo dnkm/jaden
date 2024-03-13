@@ -10,7 +10,7 @@ import DateView from "./date-view";
 const sessionsWithTeachernameQuery = supabase
   .from("sessions")
   .select(
-    "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+    "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, note, profiles(full_name))"
   );
 type SessionsWithTeachername = QueryData<typeof sessionsWithTeachernameQuery>;
 export type SessionWithTeachername = SessionsWithTeachername[number];
@@ -25,7 +25,7 @@ export default function Sessions() {
     let { data } = await supabase
       .from("sessions")
       .select(
-        "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+        "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, note, profiles(full_name))"
       )
       .eq("session_id", session_id);
 
@@ -46,7 +46,7 @@ export default function Sessions() {
       supabase
         .from("sessions")
         .select(
-          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, note, profiles(full_name))"
         )
         .eq("teacher", teacher_id)
         .gte("datetime", startOfMonth(d).toISOString())
@@ -57,7 +57,7 @@ export default function Sessions() {
       supabase
         .from("sessions")
         .select(
-          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, profiles(full_name))"
+          "*, profiles!sessions_teacher_fkey(full_name), enroll(student_id, is_present, note, profiles(full_name))"
         )
         .eq("teacher", profile!.id)
         .gte("datetime", startOfMonth(d).toISOString())
@@ -70,7 +70,7 @@ export default function Sessions() {
       supabase
         .from("sessions")
         .select(
-          "*, profiles!sessions_teacher_fkey(full_name), enroll!inner(student_id, is_present, profiles(full_name))"
+          "*, profiles!sessions_teacher_fkey(full_name), enroll!inner(student_id, is_present, note, profiles(full_name))"
         )
         .gte("datetime", startOfMonth(d).toISOString())
         .lte("datetime", endOfMonth(d).toISOString())

@@ -24,7 +24,7 @@ export default function DateView({
       limit: 10,
       teacher: profile!.id,
       datetime: set(selectedDate, {
-        hours: selectedDate.getDay() == 5 ? 12 : 11,
+        hours: selectedDate.getDay() == 5 ? 12 : 13,
         minutes: selectedDate.getDay() == 5 ? 0 : 35,
         seconds: 0,
       }).toUTCString(),
