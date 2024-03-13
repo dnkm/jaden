@@ -1,11 +1,10 @@
+import { format } from "date-fns";
 import { useContext } from "react";
-import { SessionWithTeachername } from "../component";
+import { FaCheck, FaRegEdit, FaUser } from "react-icons/fa";
 import { AppContext } from "../../../App";
 import { supabase } from "../../../supabaseClient";
-import { format } from "date-fns";
-import { FaCheck, FaRegEdit, FaUser } from "react-icons/fa";
+import { SessionWithTeachername } from "../component";
 import SessionForm from "../session-form";
-import { FaPerson } from "react-icons/fa6";
 
 export default function SessionCard({
   session,
