@@ -1,7 +1,7 @@
 import { QueryData } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
 const teachersQuery = supabase
   .from("profiles")
@@ -11,6 +11,8 @@ type ProfilesWithRole = QueryData<typeof teachersQuery>;
 
 export default function FindSession() {
   let [teachers, setTeachers] = useState<ProfilesWithRole>([]);
+  const [searchParams] = useSearchParams();
+  const test = searchParams.get("test");
 
   useEffect(() => {
     teachersQuery.eq("roles.is_teacher", true).then(({ data }) => {
@@ -30,16 +32,25 @@ export default function FindSession() {
           </tr>
         </thead>
         <tbody>
-          {teachers.map((p) => (
-            <tr key={p.id}>
-              <td>{p.full_name}</td>
-              <td>
-                <Link to={`/student/find/${p.full_name}/${p.id}`}>
-                  <button className="btn btn-primary">Select</button>
-                </Link>
-              </td>
-            </tr>
-          ))}
+          {teachers
+            .filter(
+              (p) =>
+                test === "true" ||
+                ![
+                  "9d50bc4d-ba3a-4679-9883-eed17d157f36",
+                  "c47bf0d5-a625-4bc9-a0a3-7466558b3b2a",
+                ].includes(p.id)
+            )
+            .map((p) => (
+              <tr key={p.id}>
+                <td>{p.full_name}</td>
+                <td>
+                  <Link to={`/student/find/${p.full_name}/${p.id}`}>
+                    <button className="btn btn-primary">Select</button>
+                  </Link>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

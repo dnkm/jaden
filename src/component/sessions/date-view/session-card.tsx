@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { differenceInMinutes, format } from "date-fns";
 import { useContext } from "react";
 import { FaCheck, FaRegEdit, FaUser } from "react-icons/fa";
 import { AppContext } from "../../../App";
@@ -36,6 +36,12 @@ export default function SessionCard({
   }
 
   async function handleCancel() {
+    if (differenceInMinutes(session.datetime, new Date()) < 240) {
+      alert(
+        "Appointments cannot be canceled within 4 hours of the reservation time."
+      );
+      return;
+    }
     setLoading(true);
     const { error } = await supabase
       .from("enroll")
