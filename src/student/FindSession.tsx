@@ -1,7 +1,7 @@
 import { QueryData } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Link, useParams, useSearchParams } from "react-router-dom";
 
 const teachersQuery = supabase
   .from("profiles")
